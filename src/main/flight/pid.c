@@ -97,6 +97,8 @@ typedef struct {
     rateLimitFilter_t axisAccelFilter;
     pt1Filter_t ptermLpfState;
     filter_t dtermLpfState;
+    pt1Filter_t dtermLpf2State;         // Pre-differentiation LPF (BF-style: filter before diff to reduce noise amplification)
+    float previousFilteredGyroRate;     // Stores filtered gyro for pre-diff architecture
 
     float stickPosition;
 
@@ -160,6 +162,7 @@ static EXTENDED_FASTRAM float dBoostMaxAtAlleceleration;
 static EXTENDED_FASTRAM uint8_t yawLpfHz;
 static EXTENDED_FASTRAM float motorItermWindupPoint;
 static EXTENDED_FASTRAM float antiWindupScaler;
+static EXTENDED_FASTRAM uint16_t dtermLpf2Hz;   // Pre-diff LPF cutoff, 0 = disabled
 #ifdef USE_ANTIGRAVITY
 static EXTENDED_FASTRAM float iTermAntigravityGain;
 #endif
@@ -262,6 +265,7 @@ PG_RESET_TEMPLATE(pidProfile_t, pidProfile,
 
         .dterm_lpf_type = SETTING_DTERM_LPF_TYPE_DEFAULT,
         .dterm_lpf_hz = SETTING_DTERM_LPF_HZ_DEFAULT,
+        .dterm_lpf2_hz = 250,   // Pre-diff LPF default 250Hz: ~0.6ms delay at 1kHz
         .yaw_lpf_hz = SETTING_YAW_LPF_HZ_DEFAULT,
 
         .itermWindupPointPercent = SETTING_ITERM_WINDUP_DEFAULT,
