@@ -50,3 +50,8 @@ tokens.yaml
 # Local development files
 .semgrepignore
 build_sitl/
+
+# Claude Code
+.claude/
+CLAUDE.md
+AGENT.md
