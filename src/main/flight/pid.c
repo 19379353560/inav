@@ -327,12 +327,18 @@ bool pidInitFilters(void)
         return false;
     }
 
-    for (int axis = 0; axis < 3; ++ axis) {
-        initFilter(pidProfile()->dterm_lpf_type, &pidState[axis].dtermLpfState, pidProfile()->dterm_lpf_hz, refreshRate);
-    }
+    // Pre-differentiation LPF: filter gyro before diff to avoid amplifying high-freq noise.
+    // High cutoff (default 250Hz) keeps delay <0.6ms at 1kHz loop.
+    dtermLpf2Hz = pidProfile()->dterm_lpf2_hz;
+    const float dT = US2S(refreshRate);
 
-    for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
-        pt1FilterInit(&windupLpf[i], pidProfile()->iterm_relax_cutoff, US2S(refreshRate));
+    for (int axis = 0; axis < 3; axis++) {
+        initFilter(pidProfile()->dterm_lpf_type, &pidState[axis].dtermLpfState, pidProfile()->dterm_lpf_hz, refreshRate);
+        if (dtermLpf2Hz > 0) {
+            pt1FilterInit(&pidState[axis].dtermLpf2State, dtermLpf2Hz, dT);
+            pidState[axis].previousFilteredGyroRate = 0.0f;
+        }
+        pt1FilterInit(&windupLpf[axis], pidProfile()->iterm_relax_cutoff, dT);
     }
 
 #ifdef USE_ANTIGRAVITY
@@ -771,20 +777,24 @@ static float applyDBoost(pidState_t *pidState, float dT) {
 #endif
 
 static float dTermProcess(pidState_t *pidState, float currentRateTarget, float dT, float dT_inv) {
-    // Calculate new D-term
-    float newDTerm = 0;
     if (pidState->kD == 0) {
-        // optimisation for when D is zero, often used by YAW axis
-        newDTerm = 0;
-    } else {
-        float delta = pidState->previousRateGyro - pidState->gyroRate;
-
-        delta = dTermLpfFilterApplyFn((filter_t *) &pidState->dtermLpfState, delta);
-
-        // Calculate derivative
-        newDTerm =  delta * (pidState->kD * dT_inv) * applyDBoost(pidState, currentRateTarget, dT, dT_inv);
+        return 0;
     }
-    return(newDTerm);
+
+    float delta;
+    if (dtermLpf2Hz > 0) {
+        // BF-style: pre-filter gyro before differentiation.
+        // Diff amplifies noise; filtering first keeps D clean with minimal delay (PT1@250Hz = ~0.6ms at 1kHz).
+        const float filteredGyro = pt1FilterApply(&pidState->dtermLpf2State, pidState->gyroRate);
+        delta = pidState->previousFilteredGyroRate - filteredGyro;
+        pidState->previousFilteredGyroRate = filteredGyro;
+    } else {
+        delta = pidState->previousRateGyro - pidState->gyroRate;
+    }
+
+    delta = dTermLpfFilterApplyFn((filter_t *) &pidState->dtermLpfState, delta);
+
+    return delta * (pidState->kD * dT_inv) * applyDBoost(pidState, currentRateTarget, dT, dT_inv);
 }
 
 static void applyItermLimiting(pidState_t *pidState) {
@@ -864,7 +874,7 @@ static void NOINLINE pidApplyFixedWingRateController(pidState_t *pidState, float
     const uint16_t limit = getPidSumLimit(pidState->axis);
 
     if (pidProfile()->pidItermLimitPercent != 0){
-        float itermLimit = limit * pidProfile()->pidItermLimitPercent * 0.01f;
+        const float itermLimit = limit * pidProfile()->pidItermLimitPercent * 0.01f;
         pidState->errorGyroIf = constrainf(pidState->errorGyroIf, -itermLimit, +itermLimit);
     }
 
@@ -939,11 +949,10 @@ static void FAST_CODE NOINLINE pidApplyMulticopterRateController(pidState_t *pid
     itermErrorRate *= iTermAntigravityGain;
 #endif
 
-    pidState->errorGyroIf += (itermErrorRate * pidState->kI * antiWindupScaler * dT)
-                             + ((newOutputLimited - newOutput) * pidState->kT * antiWindupScaler * dT);
+    pidState->errorGyroIf += (itermErrorRate * pidState->kI + (newOutputLimited - newOutput) * pidState->kT) * antiWindupScaler * dT;
 
     if (pidProfile()->pidItermLimitPercent != 0){
-        float itermLimit = limit * pidProfile()->pidItermLimitPercent * 0.01f;
+        const float itermLimit = limit * pidProfile()->pidItermLimitPercent * 0.01f;
         pidState->errorGyroIf = constrainf(pidState->errorGyroIf, -itermLimit, +itermLimit);
     }
 
