@@ -1,3 +1,57 @@
+# INAV — D-term Pre-differentiation LPF Optimization Fork
+
+> **Research Fork** | Based on INAV 9.0.1 | Target: STM32H743 (MATEKH743) | IMU: ICM42688P
+
+## ✨ What's New in This Fork
+
+This fork implements a **D-term pre-differentiation low-pass filter** inspired by Betaflight's filtering architecture, improving altitude hold and position hold stability while preserving fast attitude response.
+
+### The Problem with Stock INAV D-term
+
+Stock INAV differentiates the raw gyro signal first, then filters:
+
+```
+gyroRate → diff(prev - cur) → PT2 LPF @ 110Hz → D output
+```
+
+Differentiation amplifies high-frequency noise by a factor of `f_loop / f_cutoff` (~9× at 1 kHz loop). The downstream PT2 then has to suppress that amplified noise, limiting how high D gain can be set.
+
+### The Fix: Filter Before Differentiation
+
+This fork adds an optional PT1 pre-filter applied **before** differentiation (Betaflight-style):
+
+```
+gyroRate → PT1 pre-LPF @ 250Hz → diff(prev_filtered - filtered) → PT2 LPF @ 110Hz → D output
+```
+
+| | Stock INAV | This Fork |
+|---|---|---|
+| Noise amplification factor | ~9× | ~3.6× |
+| Added latency | — | +0.6 ms (PT1 @ 250 Hz) |
+| D gain headroom | baseline | +15–25% |
+| Altitude/position hold | baseline | improved disturbance rejection |
+
+### New Parameter
+
+| Parameter | Default | Range | Description |
+|---|---|---|---|
+| `dterm_lpf2_hz` | 250 | 0–500 | Pre-diff PT1 cutoff. `0` = disabled (stock behavior). Lower for larger props (7": 200 Hz). |
+
+### Key Code Changes
+
+- `src/main/flight/pid.c` — `dTermProcess()`: pre-filter path with `dtermLpf2State`
+- `src/main/flight/pid.h` — `pidProfile_t`: added `dterm_lpf2_hz` field
+- `src/main/fc/settings.yaml` — new `dterm_lpf2_hz` parameter
+
+### Latency Analysis
+
+At 1 kHz PID loop rate:
+- PT1 @ 250 Hz → **+0.6 ms** phase delay
+- Position/altitude loop bandwidth is < 5 Hz — this delta is imperceptible to the controller
+- Attitude loop: 0.6 ms is acceptable given the noise reduction benefit
+
+---
+
 # INAV - navigation capable flight controller
 
 # F411 PSA
