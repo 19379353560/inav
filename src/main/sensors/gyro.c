@@ -473,12 +473,12 @@ void FAST_CODE NOINLINE gyroFilter(void)
 
         // LULU gyro filter
         DEBUG_SET(DEBUG_LULU, axis, gyroADCf); //Pre LULU debug
-        float preLulu = gyroADCf;
+        const float preFilterGyro = gyroADCf;
         gyroADCf = gyroLuluApplyFn((filter_t *) &gyroLuluState[axis], gyroADCf);
         DEBUG_SET(DEBUG_LULU, axis + 3, gyroADCf); //Post LULU debug
 
         if (axis == ROLL) {
-            DEBUG_SET(DEBUG_LULU, 6, gyroADCf - preLulu); //LULU delta debug
+            DEBUG_SET(DEBUG_LULU, 6, gyroADCf - preFilterGyro); //LULU delta debug
         }
 
         // Gyro Main LPF
