@@ -1,7 +1,7 @@
 # Project Status
 
-This repository is a personal INAV firmware branch used for experiments and
-upstream pull requests.
+This repository is a personal INAV firmware branch used for experiments,
+upstream pull requests, and SkyPilot H743 support work.
 
 ## Focus Areas
 
@@ -14,6 +14,19 @@ upstream pull requests.
 
 - https://github.com/iNavFlight/inav/pull/11464
 - https://github.com/iNavFlight/inav/pull/11465
+
+## Current Review Request
+
+Flight-test feedback and Blackbox logs are welcome here:
+
+https://github.com/19379353560/inav/issues/1
+
+Useful feedback includes:
+
+- Logs on noisy and clean frames with `dterm_lpf2_hz` disabled and enabled.
+- Motor temperature notes after hover and active flight.
+- D-term noise comparisons around disabled, 200Hz, and 250Hz.
+- Any unexpected behavior when changing PID/filter profiles.
 
 ## Validation Status
 
@@ -28,4 +41,3 @@ using the branch for real flights.
 - Motor temperature observations.
 - Scheduler and sensor-chain maintainability review.
 - SkyPilot target review.
-
