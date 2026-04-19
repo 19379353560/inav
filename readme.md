@@ -11,6 +11,10 @@
 > 基于 [iNavFlight/inav](https://github.com/iNavFlight/inav) 官方仓库的个人优化分支，针对 PID 控制质量、调度器效率和自制飞控板硬件适配进行了系统性改进。
 >
 > **官方 PR：** [iNavFlight/inav#11464](https://github.com/iNavFlight/inav/pull/11464) / [iNavFlight/inav#11465](https://github.com/iNavFlight/inav/pull/11465)
+>
+> **Status:** See [PROJECT_STATUS.md](PROJECT_STATUS.md). Firmware review,
+> flight logs, and tuning feedback are welcome through
+> [GitHub issues](https://github.com/19379353560/inav/issues/new/choose).
 
 ---
 
