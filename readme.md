@@ -1,8 +1,14 @@
 # INAV 飞控固件 — 性能优化版
 
+[![INAV](https://img.shields.io/badge/INAV-firmware-blue)](https://github.com/iNavFlight/inav)
+[![D-term](https://img.shields.io/badge/focus-D--term%20filtering-green)](https://github.com/19379353560/inav)
+[![SkyPilot](https://img.shields.io/badge/target-SkyPilot%20H743-orange)](https://github.com/19379353560/skypilot)
+[![Stars](https://img.shields.io/github/stars/19379353560/inav?style=social)](https://github.com/19379353560/inav/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/19379353560/inav)](https://github.com/19379353560/inav/commits/master)
+
 > 基于 [iNavFlight/inav](https://github.com/iNavFlight/inav) 官方仓库的个人优化分支，针对 PID 控制质量、调度器效率和自制飞控板硬件适配进行了系统性改进。
 >
-> **官方 PR：** [iNavFlight/inav#11464](https://github.com/iNavFlight/inav/pull/11464)
+> **官方 PR：** [iNavFlight/inav#11464](https://github.com/iNavFlight/inav/pull/11464) / [iNavFlight/inav#11465](https://github.com/iNavFlight/inav/pull/11465)
 
 ---
 
@@ -152,5 +158,14 @@ IMU 读取延迟从最坏 **1ms** 降至 **~20μs**，对 1kHz PID 循环意义�
 ## 相关链接
 
 - [官方 PR #11464](https://github.com/iNavFlight/inav/pull/11464)
+- [官方 PR #11465](https://github.com/iNavFlight/inav/pull/11465)
 - [INAV 官方仓库](https://github.com/iNavFlight/inav)
 - [SKYPILOT 飞控硬件](https://github.com/19379353560/skypilot)
+
+---
+
+## Feedback Wanted
+
+English feedback is welcome. Useful review areas include D-term filtering
+behavior, default cutoff values, CLI setting naming, scheduler changes, and
+whether the SkyPilot target definition is suitable for upstream INAV review.
