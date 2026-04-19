@@ -1,5 +1,7 @@
 # INAV 飞控固件 — 性能优化版
 
+![INAV firmware experiments banner](assets/cover.svg)
+
 [![INAV](https://img.shields.io/badge/INAV-firmware-blue)](https://github.com/iNavFlight/inav)
 [![D-term](https://img.shields.io/badge/focus-D--term%20filtering-green)](https://github.com/19379353560/inav)
 [![SkyPilot](https://img.shields.io/badge/target-SkyPilot%20H743-orange)](https://github.com/19379353560/skypilot)
