@@ -21,6 +21,10 @@ Flight-test feedback and Blackbox logs are welcome here:
 
 https://github.com/19379353560/inav/issues/1
 
+Lightweight discussion:
+
+https://github.com/19379353560/inav/discussions/2
+
 Useful feedback includes:
 
 - Logs on noisy and clean frames with `dterm_lpf2_hz` disabled and enabled.
