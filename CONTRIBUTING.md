@@ -18,6 +18,8 @@ contributions are flight logs, careful code review, and reproducible test notes.
   https://github.com/19379353560/inav/issues/1
 - Discussion:
   https://github.com/19379353560/inav/discussions/2
+- Flight-test guide:
+  https://19379353560.github.io/dterm-flight-test-guide.html
 - Upstream PR #11464:
   https://github.com/iNavFlight/inav/pull/11464
 - Upstream PR #11465:
