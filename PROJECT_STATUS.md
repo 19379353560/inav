@@ -25,6 +25,10 @@ Lightweight discussion:
 
 https://github.com/19379353560/inav/discussions/2
 
+Flight-test guide:
+
+https://19379353560.github.io/dterm-flight-test-guide.html
+
 Useful feedback includes:
 
 - Logs on noisy and clean frames with `dterm_lpf2_hz` disabled and enabled.
