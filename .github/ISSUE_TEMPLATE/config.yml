@@ -1,0 +1,14 @@
+blank_issues_enabled: true
+contact_links:
+  - name: D-term pre-diff LPF flight-test request
+    url: https://github.com/19379353560/inav/issues/1
+    about: Main thread for dterm_lpf2_hz flight-test logs and observations.
+  - name: D-term flight-test guide
+    url: https://19379353560.github.io/dterm-flight-test-guide.html
+    about: Use this guide before collecting comparison logs.
+  - name: INAV upstream PR
+    url: https://github.com/iNavFlight/inav/pull/11464
+    about: Active upstream pull request with green checks.
+  - name: Discussion
+    url: https://github.com/19379353560/inav/discussions/2
+    about: Ask lightweight questions before opening a focused issue.
